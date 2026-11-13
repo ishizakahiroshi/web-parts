@@ -1,0 +1,32 @@
+{
+  "watchlists": [
+    {
+      "type": "lines",
+      "path": "${DOXGUARD_WATCHLIST_DIR}/names.txt",
+      "label": "private names",
+      "optional": false
+    }
+  ],
+  "structural": {
+    "windowsPath": true,
+    "posixHome": true,
+    "privateIp": true,
+    "email": true,
+    "custom": []
+  },
+  "allow": {
+    "names": [],
+    "emails": [],
+    "emailDomains": ["example.com", "users.noreply.github.com"],
+    "disallowBareAllow": false
+  },
+  "noise": {
+    "minNeedleLength": 2,
+    "shortNeedleMaxLength": 0,
+    "stagedAddedLinesOnly": false,
+    "skipShortKanaGivenNames": true,
+    "asciiCaseInsensitive": false
+  },
+  "exemptPaths": [],
+  "failOnSkip": true
+}

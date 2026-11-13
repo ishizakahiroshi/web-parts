@@ -36,7 +36,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
+    "check:dist": "node scripts/check-dist.mjs",
+    "prepack": "pnpm run build && pnpm run check:dist",
     "examples": "vite examples"
   },
   "peerDependencies": {

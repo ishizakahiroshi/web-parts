@@ -1,0 +1,8 @@
+{
+  "watchlists": [],
+  "allow": {
+    "emailDomains": ["example.com", "users.noreply.github.com"],
+    "disallowBareAllow": true
+  },
+  "failOnSkip": true
+}

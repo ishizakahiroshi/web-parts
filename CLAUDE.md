@@ -41,6 +41,7 @@ fresh public clone でも有効な内容に保つこと。 -->
 
 - 型の検査: `pnpm typecheck`
 - 試験: `pnpm test`
+- ビルドと配る形の検査: `pnpm build` の後に `pnpm check:dist`
 - 見本のページ: `pnpm --filter @ishizakahiroshi/share-parts examples`
 - このファイルの検査: `node scripts/check-claude-md.mjs`
 
@@ -51,6 +52,7 @@ fresh public clone でも有効な内容に保つこと。 -->
 | 通信をしない・投稿ボタンを持たない・経路は目的地だけ・URL は https だけ | `packages/share-parts/src/core.ts` の先頭 | `packages/share-parts/test/rules.test.ts` |
 | 2 つの見た目は同じ判断を描くだけ（動きを分けない） | `packages/share-parts/src/core.ts` の `planButtons` | `packages/share-parts/test/dom.test.tsx` |
 | 外部の URL の書き方は公式の資料で確かめ、確かめた日と出どころを残す | `packages/share-parts/README.md` の「知っておくこと」 | なし |
+| 配る形は、まとめる道具なしでも動く（`dom.js` は隣の `core.js` だけを読み込む） | `packages/share-parts/scripts/check-dist.mjs` の先頭 | `pnpm check:dist`（CI） |
 
 **新しいルールを足す前に、まずこの表に 1 行足せる形にできないかを考える。**
 
@@ -69,7 +71,11 @@ path and do not silently fall back to `docs/local` when the entry is missing.
 
 ## secrets-scan（このリポジトリの配線）
 
-書く瞬間の責務（固有名詞の一般化・fixture は合成データ等）は上記「AI 作業共通ルール」の参照先に従う。リポジトリの中の検査の配線はまだ無い。公開へ切り替える前に入れ、入れたらここを配線の中身に書き換える。
+書く瞬間の責務（固有名詞の一般化・fixture は合成データ等）は上記「AI 作業共通ルール」の参照先に従う。このリポジトリ固有の配線は以下:
+
+- scanner: doxguard（手動実行: `npx doxguard@0.2.1 scan --all-tracked --block --strict`）。監視語のリストはリポジトリの外に置く（`doxguard.config.json` は環境変数の参照だけを持つ）
+- pre-commit: `.githooks/pre-commit`（clone した直後は `npx doxguard@0.2.1 install-hooks` で有効にする）
+- CI: `.github/workflows/doxguard.yml`（構造パターンだけ。設定は `doxguard.ci.json`）と `.github/workflows/gitleaks.yml`（秘密の形の文字列）
 
 ## 関連ドキュメント
 

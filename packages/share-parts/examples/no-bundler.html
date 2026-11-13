@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>まとめる道具なしで使う | share-parts の見本</title>
+<link rel="stylesheet" href="./example.css">
+</head>
+<body>
+<main>
+  <h1>まとめる道具なしで使う</h1>
+  <p>ビルドした <code>dist/dom.js</code> を、ブラウザがそのまま読み込む見本です。先に <code>pnpm run build</code> を実行し、このフォルダの 1 つ上（部品のフォルダ）を、ただのファイル置き場として配って開きます。値はすべて作り物です。</p>
+  <div id="row" class="row"></div>
+  <p id="result" role="status"></p>
+</main>
+<script type="module">
+  import { mountShareButtons } from '../dist/dom.js'
+
+  const text = { shared: '共有しました', copied: 'リンクをコピーしました', cancelled: '', failed: '共有できませんでした' }
+  mountShareButtons(document.getElementById('row'), {
+    data: { title: '見本の学校', url: 'https://example.com/school/000/' },
+    destination: { lat: 35.5, lng: 135.25 },
+    items: [
+      { kind: 'route', label: '経路（Google マップ）', className: 'chip' },
+      { kind: 'share', label: '共有', className: 'chip' },
+      { kind: 'line', label: 'LINE で送る', className: 'chip' },
+      { kind: 'mail', label: 'メールで送る', className: 'chip' },
+    ],
+    onResult: (result) => { document.getElementById('result').textContent = text[result] },
+  })
+</script>
+</body>
+</html>

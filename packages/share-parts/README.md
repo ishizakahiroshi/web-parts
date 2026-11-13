@@ -113,6 +113,7 @@ URL の書き方は、次の公式の資料を 2026-11-14 に確かめたもの�
 pnpm install
 pnpm typecheck
 pnpm test
+pnpm build && pnpm check:dist                         # ビルドして、配る形を検査する
 pnpm --filter @ishizakahiroshi/share-parts examples   # 見本のページを開く
 ```
 
