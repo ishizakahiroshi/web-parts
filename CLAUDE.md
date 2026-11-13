@@ -53,6 +53,7 @@ fresh public clone でも有効な内容に保つこと。 -->
 | 2 つの見た目は同じ判断を描くだけ（動きを分けない） | `packages/share-parts/src/core.ts` の `planButtons` | `packages/share-parts/test/dom.test.tsx` |
 | 外部の URL の書き方は公式の資料で確かめ、確かめた日と出どころを残す | `packages/share-parts/README.md` の「知っておくこと」 | なし |
 | 配る形は、まとめる道具なしでも動く（`dom.js` は隣の `core.js` だけを読み込む） | `packages/share-parts/scripts/check-dist.mjs` の先頭 | `pnpm check:dist`（CI） |
+| npm へは、タグ `share-parts-v<版>` の push で CI から出す。トークンを置かない（Trusted Publishing） | `.github/workflows/release.yml` の先頭 | `scripts/check-release-workflow.mjs`（CI） |
 
 **新しいルールを足す前に、まずこの表に 1 行足せる形にできないかを考える。**
 

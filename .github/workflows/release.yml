@@ -1,0 +1,114 @@
+name: Release
+
+# 部品を npm へ出す。タグ share-parts-v<版>（例 share-parts-v0.1.1）を push すると動く。
+#
+# npm への認証は Trusted Publishing（GitHub Actions の OIDC）。トークンは置かない・参照しない
+# （scripts/check-release-workflow.mjs が検査する）。npm の側では、パッケージの設定の Trusted Publisher に
+# このリポジトリと、このファイルの名前（release.yml）を登録しておく。
+#
+# 出す前に確かめること: タグの版と package.json の版が同じ・タグの commit が main に入っている・
+# 型・試験・ビルド・配る形・固有名詞の走査が通る。
+# 同じ版が npm に既にあるときは、公開を飛ばして成功にする（やり直しても二重に出さない）。
+# workflow_dispatch は、タグの push で動かなかったときのやり直し用（既にあるタグを指定する）。
+
+on:
+  push:
+    tags: ['share-parts-v*.*.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to publish (share-parts-vX.Y.Z)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: publish share-parts to npm
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+    steps:
+      - name: Checkout the tag
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: refs/tags/${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Check the tag against package.json and main
+        run: |
+          version="${RELEASE_TAG#share-parts-v}"
+          if [[ "$version" == "$RELEASE_TAG" || ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "The tag must look like share-parts-vX.Y.Z"; exit 1
+          fi
+          package_version="$(node -p "require('./packages/share-parts/package.json').version")"
+          if [[ "$package_version" != "$version" ]]; then
+            echo "The tag says $version but package.json says $package_version"; exit 1
+          fi
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor HEAD FETCH_HEAD; then
+            echo "The tagged commit is not on main"; exit 1
+          fi
+          echo "RELEASE_VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@a15d269cd4658e1107c09f1fabf4cbd7bd1f308a # v4.4.0
+        with:
+          version: 11.1.1
+
+      - name: Setup Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      # Trusted Publishing は npm 11.5.1 以上が要る
+      - name: Update npm
+        run: npm install -g npm@^11.5.1
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+      - name: Check the built files
+        run: pnpm check:dist
+
+      - name: Scan tracked files (structural patterns only, strict)
+        run: npx --yes doxguard@0.2.1 scan --all-tracked --block --strict --config doxguard.ci.json
+
+      - name: Publish to npm (skipped when this version is already there)
+        working-directory: packages/share-parts
+        run: |
+          if npm view "@ishizakahiroshi/share-parts@${RELEASE_VERSION}" version >/dev/null 2>&1; then
+            echo "@ishizakahiroshi/share-parts@${RELEASE_VERSION} is already on npm; nothing to publish"
+            exit 0
+          fi
+          npm publish --access public
+
+      - name: Confirm the version on npm
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            if npm view "@ishizakahiroshi/share-parts@${RELEASE_VERSION}" version >/dev/null 2>&1; then
+              echo "@ishizakahiroshi/share-parts@${RELEASE_VERSION} is on npm"; exit 0
+            fi
+            sleep 20
+          done
+          echo "The version did not show up on npm within two minutes"; exit 1

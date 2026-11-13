@@ -8,6 +8,6 @@
     "test": "pnpm -r test",
     "build": "pnpm -r build",
     "check:dist": "pnpm -r check:dist",
-    "check": "node scripts/check-claude-md.mjs"
+    "check": "node scripts/check-claude-md.mjs && node scripts/check-release-workflow.mjs"
   }
 }

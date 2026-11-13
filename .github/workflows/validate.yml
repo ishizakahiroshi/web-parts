@@ -28,6 +28,9 @@ jobs:
       - name: Check CLAUDE.md structure
         run: node scripts/check-claude-md.mjs
 
+      - name: Check the release workflow (no stored npm token)
+        run: node scripts/check-release-workflow.mjs
+
       - name: Setup pnpm
         uses: pnpm/action-setup@a15d269cd4658e1107c09f1fabf4cbd7bd1f308a # v4.4.0
         with:
