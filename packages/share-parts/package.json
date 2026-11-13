@@ -9,6 +9,9 @@
     "url": "git+https://github.com/ishizakahiroshi/web-parts.git",
     "directory": "packages/share-parts"
   },
+  "homepage": "https://github.com/ishizakahiroshi/web-parts/tree/main/packages/share-parts#readme",
+  "bugs": "https://github.com/ishizakahiroshi/web-parts/issues",
+  "keywords": ["share", "web-share", "line", "privacy", "react"],
   "type": "module",
   "sideEffects": false,
   "exports": {

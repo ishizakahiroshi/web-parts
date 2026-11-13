@@ -4,7 +4,15 @@ Share buttons without tracking. A framework-free core (native share with copy fa
 
 ページを人に送るためのボタンの部品です。芯は画面を持たない関数で、その上に React 用と素の JavaScript 用の薄い見た目が載っています。どちらの見た目も同じ関数の結果を描くだけなので、動きは同じになります。
 
-> まだ公開の前です（0.1.0 は未発行）。
+## 入れ方
+
+```text
+pnpm add @ishizakahiroshi/share-parts
+# または
+npm install @ishizakahiroshi/share-parts
+```
+
+React 用の見た目（`/react`）を使うときだけ、React 18 以上が要ります。関数（`.`）と素の JavaScript 用（`/dom`）は、ほかに何も要りません。
 
 ## できること
 
