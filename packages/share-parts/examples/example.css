@@ -1,0 +1,7 @@
+/* 見本のページだけの見た目。部品そのものは色も形も持たない。 */
+body { font-family: system-ui, sans-serif; line-height: 1.7; color: #222; margin: 0; }
+main { max-width: 720px; margin: 0 auto; padding: 16px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+.chip { font: inherit; padding: 8px 14px; border: 1px solid #888; border-radius: 999px; background: #fff; color: #222; text-decoration: none; cursor: pointer; }
+.chip:focus-visible { outline: 3px solid #1a5fb4; outline-offset: 2px; }
+#result { min-height: 1.7em; font-weight: 700; }
